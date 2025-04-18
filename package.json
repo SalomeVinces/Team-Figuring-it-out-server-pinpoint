@@ -1,0 +1,29 @@
+{
+  "name": "team-figuring-it-out-server-pinpoint",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev": "nodemon"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SalomeVinces/Team-Figuring-it-out-server-pinpoint.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/SalomeVinces/Team-Figuring-it-out-server-pinpoint/issues"
+  },
+  "homepage": "https://github.com/SalomeVinces/Team-Figuring-it-out-server-pinpoint#readme",
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "mongodb": "^6.15.0",
+    "mongoose": "^8.13.2"
+  }
+}
