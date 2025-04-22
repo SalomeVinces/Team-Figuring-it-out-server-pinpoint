@@ -3,6 +3,8 @@ import dotenv from "dotenv"
 import express from "express"
 import mongoose from "mongoose"
 
+import userController from "./controllers/user_controller.js"
+
 //Initializing the use of dotenv for environmental variables
 dotenv.config()
 
@@ -10,7 +12,7 @@ dotenv.config()
 const app = express()
 
 // Creating connection to MongoDB utilizing dotenv
-const MONGODB = process.env.MONGO_DB_URI + "/" + process.env.MONGO_DB_NAME + process.env.MONGO_DB_PARAMS
+const MONGODB = process.env.MONGO_DB_URI + "/" + process.env.MONGO_DB_NAME
 mongoose.connect(MONGODB)
 const db = mongoose.connection
 
@@ -23,15 +25,16 @@ app.use(express.json())
 
 //! Add Controllers here
 //app.use("/...")
+app.use("/users", userController)
 
-//Testing writing to the database
-app.post('/test', (req, res) => {
-    console.log('Data received:', req.body);
-    res.status(201).json({
-        message: 'Data received successfully',
-        data: req.body
-    });
-})
+//Testing for Postman
+// app.post('/test', (req, res) => {
+//     console.log('Data received:', req.body);
+//     res.status(201).json({
+//         message: 'Data received successfully',
+//         data: req.body
+//     });
+// })
 
 //! Add where validation will be
 // app.use(validateSession)
