@@ -2,6 +2,7 @@
 import dotenv from "dotenv"
 import express from "express"
 import mongoose from "mongoose"
+import cors from "cors"
 
 import userController from "./controllers/user_controller.js"
 
@@ -19,8 +20,8 @@ const db = mongoose.connection
 //Middleware
 app.use(express.json())
 
-//! Apply CORS to speak with client
-//app.use(cors())
+//? Apply CORS to speak with client
+app.use(cors())
 
 
 //! Add Controllers here
