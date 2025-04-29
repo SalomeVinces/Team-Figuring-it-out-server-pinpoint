@@ -10,8 +10,8 @@ const UserSchema = new mongoose.Schema( {
         required: true
     },
     dateOfBirth: { //!Look up how to incorporate date/DoB
-        type: Number,
-        required: true
+        type: Date,
+        required: true,
     },
     email: { 
         type: String,
@@ -23,7 +23,7 @@ const UserSchema = new mongoose.Schema( {
     },
     zipCode: { 
         type: Number,
-        required: false
+        required: true
     },
 } )
 
