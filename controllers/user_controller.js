@@ -23,8 +23,8 @@ router.post("/signup", async (req, res) => {
         const newUser = await user.save()
 
         const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
-            expiresIn: 60 * 60 * 24, //! Using for testing purposes, will switch when app is live
-            // expiresIn: 60m 
+            expiresIn: '3h', //! Using for testing purposes, will switch when app is live
+            // expiresIn: '60m' 
         })
 
         res.status(200).json({
