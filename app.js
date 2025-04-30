@@ -33,7 +33,7 @@ app.use("/bills", billController)
 app.use("/officials", officialController)
 
 // All routes after this will require user signup and login
-// app.use(validateSession)
+app.use(validateSession)
 
 app.use("/users", userController)
 
