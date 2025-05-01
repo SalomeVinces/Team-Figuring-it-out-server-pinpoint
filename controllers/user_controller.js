@@ -3,6 +3,8 @@ import User from "../models/users.js"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 
+import validateSession from "../middleware/validateSession.js"
+
 const router = express.Router()
 
 router.post("/signup", async (req, res) => {
@@ -83,7 +85,7 @@ router.post("/login", async (req, res) => {
     }
 })
 
-router.patch("/update/:userId", async (req, res) => {
+router.patch("/update/:userId", validateSession, async (req, res) => {
     try {
         let newInfo = req.body
 
