@@ -3,24 +3,23 @@ import { fetchFromOpenStates } from '../services/openStatesApiService.js'
 
 const router = express.Router()
 
-
-
 //GET specific officials by ID
-router.get('/:officialId', async (req, res) => {
-    try {
-        const { officialId } = req.params
-        const encodedOfficialId = encodeURIComponent(officialId)
-        console.log(encodedOfficialId)
+// router.get('/:officialId', async (req, res) => {
+//     try {
+//         const { officialId } = req.params
+//         const encodedOfficialId = encodeURIComponent(officialId)
+//         console.log(encodedOfficialId)
 
-        const official = await fetchFromOpenStates(`/people/${encodedOfficialId}`)
-        res.json(official)
-    } catch (error) {
-        res.status(500).json({
-            error: `Error fetching specific Bill Id: ${req.params.officialId}`, 
-            details: error.message
-        })
-    }
-})
+//         const official = await fetchFromOpenStates(`/people/ocd-person/${encodedOfficialId}`)
+//         res.json(official)
+//     } catch (error) {
+//         res.status(500).json({
+//             error: `Error fetching specific Official Id: ${req.params.officialId}`, 
+//             details: error.message
+//         })
+//     }
+// })
+
 
 router.get('/', async (req, res) => {
     try {

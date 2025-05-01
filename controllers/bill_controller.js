@@ -20,24 +20,6 @@ router.get('/:billId', async (req, res) => {
     }
 })
 
-// router.get('/:billId', async (req, res) => {
-//     try {
-//         const { billId } = req.params;
-//         console.log('Bill ID:', billId);
-
-//         const encodedBillId = encodeURIComponent(billId)
-
-//         const bill = await fetchFromOpenStates(`/bills/ocd-bill/${encodedBillId}`);
-//         res.json(bill);
-//     } catch (error) {
-//         console.error('Error fetching Bill ID:', req.params.billId);
-//         res.status(500).json({
-//             error: `Error fetching specific Bill Id: ${req.params.billId}`, 
-//             details: error.message
-//         });
-//     }
-// });
-
 //GET all bills by specific parameters
 router.get('/', async (req, res) => {
     try {
