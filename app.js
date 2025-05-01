@@ -29,13 +29,13 @@ app.use(cors())
 
 //! Add Controllers here
 //These are routes users can access without logging in, used for the landing page, will be more detailed in the specific controllers for interacting beyond these two routes
+app.use("/users", userController)
 app.use("/bills", billController)
 app.use("/officials", officialController)
 
 // All routes after this will require user signup and login
 app.use(validateSession)
 
-app.use("/users", userController)
 
 
 //Testing for Postman, not required in final code
