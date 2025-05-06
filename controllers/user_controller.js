@@ -101,6 +101,20 @@ router.patch("/update/:userId", validateSession, async (req, res) => {
     }
 })
 
+router.get("/one/:userId", async (req, res) => {
+    try {
+        const user = await User.findById(req.params.userId).select({firstName: 1, lastName: 1, dateOfBirth: 1, zipCode: 1})
+
+        res.status(200).json({
+            User: user
+        })
+    } catch (err) {
+        res.status(500).json({
+            Error: err.message
+        })
+    }
+})
+
 router.get("/all", async (req, res) => {
     try {
         const users = await User.find().sort("lastName").select({ lastName: 1, firstName: 1, email: 1 })
