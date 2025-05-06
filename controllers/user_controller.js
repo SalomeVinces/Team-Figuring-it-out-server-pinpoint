@@ -103,7 +103,7 @@ router.patch("/update/:userId", validateSession, async (req, res) => {
 
 router.get("/one/:userId", validateSession, async (req, res) => {
     try {
-        const user = await User.findById(req.params.userId).select({firstName: 1, lastName: 1, dateOfBirth: 1, zipCode: 1})
+        const user = await User.findById(req.params.userId).select({firstName: 1, lastName: 1, email: 1, dateOfBirth: 1, zipCode: 1})
 
         res.status(200).json({
             User: user
