@@ -27,7 +27,7 @@ router.get('/', async (req, res) => {
 
         if (!jurisdiction && !q) {
             return res.status(400).json({
-                error: "Missing required jusridiction and/or query parameters"
+                error: "Missing required jurisdiction and/or query parameters"
             })
         }
 

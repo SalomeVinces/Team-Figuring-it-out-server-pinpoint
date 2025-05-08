@@ -17,10 +17,12 @@ const validateSession = async (req, res, next) => {
         
         // allow the jwt library to drcrypt token, using our secret key
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
+        //! Remove this line below when completed
         console.log("Decoded:", decoded)
 
         // querying our user table to find the user with the matching id
         const user = await User.findById(decoded.id)
+        //! Remove this line below when completed
         console.log("User?:", user)
 
         if (!user) throw new Error("User not found")
@@ -30,7 +32,7 @@ const validateSession = async (req, res, next) => {
         next()
     } catch (err) {
         console.log(err)
-        res.status(500).json({
+        res.status(401).json({
             ValidateError: err.message.includes("expired") ? "Token expired, please signup or login again" : err.message
         })
     }
