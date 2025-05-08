@@ -2,6 +2,10 @@ import axios from "axios"
 import dotenv from "dotenv"
 dotenv.config()
 
+if (!process.env.OS_API_KEY) {
+    throw new Error("Missing OpenStates API key in environment variables")
+}
+
 const API_BASE_URL = `https://v3.openstates.org`
 
 const apiEndpoint = axios.create({

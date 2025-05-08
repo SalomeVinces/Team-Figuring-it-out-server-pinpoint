@@ -87,9 +87,24 @@ router.post("/login", async (req, res) => {
 
 router.patch("/update/:userId", validateSession, async (req, res) => {
     try {
+        // list of fields users will be allowed to update
+        const allowedUpdates = ['firstName', 'lastName', 'email', 'zipCode', 'dateOfBirth']
+        const updates = Object.keys(req.body)
+        const isValidOperation = updates.every(update => allowedUpdates.includes(update))
+
+        if (!isValidOperation) {
+            return res.status(400).json({
+                Error: "Invalid update fields"
+            })
+        }
+
         let newInfo = req.body
 
-        let results = await User.findByIdAndUpdate(req.params.userId, newInfo, { new: true })
+        let results = await User.findByIdAndUpdate(req.params.userId, newInfo, { new: true, runValidators: true }).select({ firstName: 1, lastName: 1, email: 1, dateOfBirth: 1, zipCode: 1 })
+
+        if (!results) {
+            return res.status(404).json({ Error: "User not found" });
+        }
 
         res.status(200).json({
             Result: results
@@ -103,7 +118,7 @@ router.patch("/update/:userId", validateSession, async (req, res) => {
 
 router.get("/one/:userId", validateSession, async (req, res) => {
     try {
-        const user = await User.findById(req.params.userId).select({firstName: 1, lastName: 1, email: 1, dateOfBirth: 1, zipCode: 1})
+        const user = await User.findById(req.params.userId).select({ firstName: 1, lastName: 1, email: 1, dateOfBirth: 1, zipCode: 1 })
 
         res.status(200).json({
             User: user
