@@ -5,6 +5,7 @@ import mongoose from "mongoose"
 import cors from "cors"
 
 import userController from "./controllers/user_controller.js"
+import mapController from "./controllers/map_controller.js"
 import billController from "./controllers/bill_controller.js"
 import officialController from "./controllers/official_controller.js"
 import validateSession from "./middleware/validateSession.js"
@@ -20,7 +21,7 @@ const MONGODB = process.env.MONGO_DB_URI + "/" + process.env.MONGO_DB_NAME
 mongoose.connect(MONGODB)
 const db = mongoose.connection
 
-//? Middleware
+//? Middleware to parse JSON
 app.use(express.json())
 
 //? Apply CORS to speak with client
@@ -30,6 +31,7 @@ app.use(cors())
 //! Add Controllers here
 //These are routes users can access without logging in, used for the landing page, will be more detailed in the specific controllers for interacting beyond these two routes
 app.use("/users", userController)
+app.use("/map", mapController)
 app.use("/bills", billController)
 app.use("/officials", officialController)
 
