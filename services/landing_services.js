@@ -4,6 +4,7 @@ import { stateCodeToName } from '../data/stateCodeToName.js'
 export async function getLandingData(req, res) {
     const stateCode = req.params.stateCode.toUpperCase()
     const jurisdiction = stateCodeToName[stateCode]
+    const thumbnail = req.params.image
 
     if (!jurisdiction) {
         return res.status(400).json({ error: "Invalid state code" })
@@ -15,12 +16,15 @@ export async function getLandingData(req, res) {
             per_page: 5,
             sort: "updated_desc"
         })
+        console.log("List of Bills:", bills)
 
         const officials = await fetchFromOpenStates('/people', {
             jurisdiction,
-            per_page: 5,
+            thumbnail,
+            per_page: 8,
             sort: "last_name"
         })
+        console.log("List of Officials:", officials)
 
         res.status(200).json({
             bills: bills.results || [],
