@@ -2,6 +2,12 @@ import express from "express"
 import User from "../models/users.js"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
+import fs from 'fs';
+import centroid from '@turf/centroid';
+
+// importing data from zip code json file
+const rawJson = fs.readFileSync('./data/usa_zip_codes.json', 'utf8')
+const zipGeoData = JSON.parse(rawJson)
 
 import validateSession from "../middleware/validateSession.js"
 
@@ -9,7 +15,23 @@ const router = express.Router()
 
 router.post("/signup", async (req, res) => {
     try {
-        const { firstName, lastName, dateOfBirth, email, password, zipCode } = req.body
+        const { firstName, lastName, dateOfBirth, email, password, zipCode, latitude, longitude } = req.body
+
+        let resolvedLat = latitude
+        let resolvedLng = longitude
+
+        //if  user does not accept to give lat/lng data from frontend, lookup in usa_zip_code.json data file
+        if (latitude && longitude) {
+            console.log("Using geolocation from frontend");
+        } else {
+            console.log("Using ZIP centroid as fallback");
+
+            const feature = zipGeoData.features.find(f => f.properties.ZCTA5CE10 === zipCode.toString());
+            if (!feature) throw new Error("Invalid ZIP code");
+
+            const center = centroid(feature);
+            [resolvedLng, resolvedLat] = center.geometry.coordinates;
+        }
 
         const passwordHashed = bcrypt.hashSync(password, +process.env.SALT)
 
@@ -19,7 +41,9 @@ router.post("/signup", async (req, res) => {
             dateOfBirth: dateOfBirth,
             email: email,
             password: passwordHashed,
-            zipCode: zipCode
+            zipCode: zipCode,
+            latitude: resolvedLat,
+            longitude: resolvedLng
         })
 
         const newUser = await user.save()
@@ -37,6 +61,8 @@ router.post("/signup", async (req, res) => {
 
 
     } catch (error) {
+        console.log(error)
+
         res.status(500).json({
             Error:
                 error.code === 11000
