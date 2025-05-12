@@ -7,6 +7,7 @@ import cors from "cors"
 import userController from "./controllers/user_controller.js"
 import mapController from "./controllers/map_controller.js"
 import billController from "./controllers/bill_controller.js"
+import landingController from "./controllers/landing_controller.js"
 import officialController from "./controllers/official_controller.js"
 import validateSession from "./middleware/validateSession.js"
 
@@ -32,6 +33,7 @@ app.use(cors())
 //These are routes users can access without logging in, used for the landing page, will be more detailed in the specific controllers for interacting beyond these two routes
 app.use("/users", userController)
 app.use("/map", mapController)
+app.use("/landing", landingController)
 app.use("/bills", billController)
 app.use("/officials", officialController)
 
