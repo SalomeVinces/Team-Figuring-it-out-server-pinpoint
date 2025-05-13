@@ -7,14 +7,17 @@ const validateSession = async (req, res, next) => {
         const auth = req.headers.authorization
 
         // if no auth throw error
-        if (!auth) throw new Error("Unauthorized")
+        if (!auth || !auth.startsWith("Bearer ")) {
+            throw new Error("Unauthorized - Missing or malformed token");
+        }
 
         // get the second word from the string "Bearer TOKEN_HERE"
         const token = auth.split(" ")[1]
         // console.log("Auth split?:", auth.split(" ")[1])
+        console.log("User token:", token)
 
         if (!token) throw new Error("Invalid token")
-        
+
         // allow the jwt library to drcrypt token, using our secret key
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
         //! Remove this line below when completed

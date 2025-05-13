@@ -28,8 +28,6 @@ app.use(express.json())
 //? Apply CORS to speak with client
 app.use(cors())
 
-
-//! Add Controllers here
 //These are routes users can access without logging in, used for the landing page, will be more detailed in the specific controllers for interacting beyond these two routes
 app.use("/users", userController)
 app.use("/map", mapController)
@@ -39,17 +37,6 @@ app.use("/officials", officialController)
 
 // All routes after this will require user signup and login
 app.use(validateSession)
-
-
-
-//Testing for Postman, not required in final code
-// app.post('/test', (req, res) => {
-//     console.log('Data received:', req.body);
-//     res.status(201).json({
-//         message: 'Data received successfully',
-//         data: req.body
-//     });
-// })
 
 //? Confirming connection to the mongoose database
 db.once("open", () => {
