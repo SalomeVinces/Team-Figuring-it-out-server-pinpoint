@@ -81,7 +81,7 @@ router.post("/login", async (req, res) => {
         const foundUser = await User.findOne({ email: email })
 
         //if user is not found in the MongoDB, then display error message
-        if (!foundUser) throw new Error("Error logging in")
+        if (!foundUser) throw new Error("Error logging in user")
 
         //verify that the supplied password matches the encrypted password in MongoDB
         const verifiedPassword = await bcrypt.compare(password, foundUser.password)
@@ -90,7 +90,7 @@ router.post("/login", async (req, res) => {
         console.log("Do passwords match:", verifiedPassword)
 
         //if user supplies an invalid password or if passwords do not match, then display error message
-        if (!verifiedPassword) throw new Error("Error logging in")
+        if (!verifiedPassword) throw new Error("Error logging in password")
 
         const token = jwt.sign({ id: foundUser._id }, process.env.JWT_SECRET, {
             expiresIn: "1 day"
@@ -105,6 +105,7 @@ router.post("/login", async (req, res) => {
 
 
     } catch (error) {
+        console.log(error);
         res.status(500).json({
             Error: error.message
         })
