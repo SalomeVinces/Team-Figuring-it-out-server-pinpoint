@@ -27,37 +27,67 @@ router.get('/', async (req, res) => {
             jurisdiction,
             q = "",
             sort = "updated_desc",
-            pages = 3 // how many 20-bill pages to fetch (default to 3 pages = 60 bills)
+            pages = 3,
+            chamber,     // "Senate", "House"
+            keyword,     // e.g. "education,housing"
+            voteStatus   // e.g. "pass", "vetoed"
         } = req.query;
 
         if (!jurisdiction) {
             return res.status(400).json({ error: "Missing required jurisdiction parameter" });
         }
 
-        let allResults = [];
-        const maxPages = Math.min(parseInt(pages), 5); // limit to 5 pages = 100 max
+        const keywords = keyword
+            ? keyword.split(",").map(k => k.trim().toLowerCase())
+            : [];
 
-        for (let page = 1; page <= maxPages; page++) {
+        let allResults = [];
+
+        for (let page = 1; page <= Math.min(parseInt(pages), 5); page++) {
             const response = await fetchFromOpenStates('/bills', {
                 jurisdiction,
                 q,
                 sort,
+                page,
                 per_page: 20,
-                page
+                include: ['abstracts', 'actions', 'votes']
             });
 
-            if (response?.results?.length) {
-                allResults.push(...response.results);
-            } else {
-                break; // no more results
-            }
+            if (!response?.results?.length) break;
+
+            const filtered = response.results.filter(bill => {
+                const chamberMatches = !chamber || (
+                    bill.from_organization?.name?.toLowerCase() === chamber.toLowerCase()
+                );
+
+                const voteMatches = !voteStatus || (
+                    bill.votes?.some(vote =>
+                        vote.result?.toLowerCase() === voteStatus.toLowerCase()
+                    )
+                );
+
+                let keywordMatches = true;
+                if (keywords.length > 0) {
+                    const entityNames = bill.actions?.flatMap(action =>
+                        action.related_entities?.map(entity => entity.name.toLowerCase()) || []
+                    ) || [];
+
+                    keywordMatches = keywords.some(keyword =>
+                        entityNames.some(name => name.includes(keyword))
+                    );
+                }
+
+                return chamberMatches && voteMatches && keywordMatches;
+            });
+
+            allResults.push(...filtered);
         }
 
         res.status(200).json({ results: allResults });
 
     } catch (error) {
-        console.error("Backend error in /bills route:", error);
-        res.status(500).json({ error: "Error fetching bills", details: error.message });
+        console.error("Error in /bills:", error);
+        res.status(500).json({ error: error.message });
     }
 });
 
