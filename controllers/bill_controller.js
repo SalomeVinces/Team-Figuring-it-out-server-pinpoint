@@ -3,13 +3,15 @@ import { fetchFromOpenStates } from '../services/openStatesApiService.js'
 
 const router = express.Router()
 
-//GET specific bill by ID
+// 🔁 In-memory cache
+const billCache = new Map(); // key: `${jurisdiction}_${q}`, value: { timestamp, data }
+const CACHE_TTL = 60 * 1000; // 60 seconds
+
+// GET specific bill by ID
 router.get('/:billId', async (req, res) => {
     try {
         const { billId } = req.params
         const encodedBillId = encodeURIComponent(billId)
-        console.log(encodedBillId)
-
         const bill = await fetchFromOpenStates(`/bills/ocd-bill/${encodedBillId}`)
         res.json(bill)
     } catch (error) {
@@ -20,7 +22,7 @@ router.get('/:billId', async (req, res) => {
     }
 })
 
-//GET all bills by specific parameters
+// GET all bills by specific parameters
 router.get('/', async (req, res) => {
     try {
         const {
@@ -28,9 +30,9 @@ router.get('/', async (req, res) => {
             q = "",
             sort = "updated_desc",
             pages = 3,
-            chamber,     // "Senate", "House"
-            keyword,     // e.g. "education,housing"
-            voteStatus   // e.g. "pass", "vetoed"
+            chamber,
+            keyword,
+            voteStatus
         } = req.query;
 
         if (!jurisdiction) {
@@ -40,6 +42,12 @@ router.get('/', async (req, res) => {
         const keywords = keyword
             ? keyword.split(",").map(k => k.trim().toLowerCase())
             : [];
+
+        const cacheKey = `${jurisdiction}_${q}_${chamber}_${voteStatus}_${keyword}`;
+        const cached = billCache.get(cacheKey);
+        if (cached && (Date.now() - cached.timestamp < CACHE_TTL)) {
+            return res.status(200).json({ results: cached.data });
+        }
 
         let allResults = [];
 
@@ -57,7 +65,8 @@ router.get('/', async (req, res) => {
 
             const filtered = response.results.filter(bill => {
                 const chamberMatches = !chamber || (
-                    bill.from_organization?.name?.toLowerCase() === chamber.toLowerCase()
+                    typeof bill.from_organization?.name === 'string' &&
+                    bill.from_organization?.name?.toLowerCase().includes(chamber?.toLowerCase() || "")
                 );
 
                 const voteMatches = !voteStatus || (
@@ -81,7 +90,20 @@ router.get('/', async (req, res) => {
             });
 
             allResults.push(...filtered);
+
+            console.log("chamber param:", chamber);
+
+            // ⏳ Add 1-second delay between pages to avoid rate limiting
+            if (page < pages) {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
         }
+
+        // 🧠 Cache result
+        billCache.set(cacheKey, {
+            timestamp: Date.now(),
+            data: allResults
+        });
 
         res.status(200).json({ results: allResults });
 
@@ -91,5 +113,4 @@ router.get('/', async (req, res) => {
     }
 });
 
-
-export default router
+export default router;
