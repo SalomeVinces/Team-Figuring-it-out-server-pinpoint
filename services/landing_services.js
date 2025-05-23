@@ -13,7 +13,7 @@ export async function getLandingData(req, res) {
     try {
         const bills = await fetchFromOpenStates('/bills', {
             jurisdiction,
-            per_page: 15,
+            per_page: 3,
             sort: "updated_desc"
         })
         console.log("List of Bills:", bills)
@@ -21,7 +21,7 @@ export async function getLandingData(req, res) {
         const officials = await fetchFromOpenStates('/people', {
             jurisdiction,
             thumbnail,
-            per_page: 15,
+            per_page: 4,
             sort: "last_name"
         })
         console.log("List of Officials:", officials)
