@@ -65,8 +65,8 @@ router.get('/', async (req, res) => {
 
             const filtered = response.results.filter(bill => {
                 const chamberMatches = !chamber || (
-                    typeof bill.from_organization?.name === 'string' &&
-                    bill.from_organization?.name?.toLowerCase().includes(chamber?.toLowerCase() || "")
+                    typeof bill.from_organization?.classification === 'string' &&
+                    bill.from_organization.classification.toLowerCase() === chamber.toLowerCase()
                 );
 
                 const voteMatches = !voteStatus || (
